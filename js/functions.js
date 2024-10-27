@@ -1,17 +1,22 @@
-function isStringValidLength(str, maxLength) {
+const isStringValidLength = function (str, maxLength) {
   return str.length <= maxLength;
-}
+};
 
-function isPalindrome(str) {
-    // Нормализуем строку: убираем пробелы и приводим к нижнему регистру
-    const normalizedStr = str.replaceAll(" ", "").toLowerCase();
+isStringValidLength('проверяемая строка', 25);
+isStringValidLength('sds', 3);
 
-    // Переворачиваем нормализованную строку
-    let reversedStr = "";
-    for (let i = normalizedStr.length - 1; i >= 0; i--) {
-        reversedStr += normalizedStr[i];
-    }
+const palindrom = function (str) {
+  // Нормализуем строку: убираем пробелы и приводим к нижнему регистру
+  const normalizedStr = str.replaceAll(' ', '').toLowerCase();
 
-    // Сравниваем нормализованную строку с перевёрнутой
-    return normalizedStr === reversedStr;
-}
+  // Переворачиваем нормализованную строку
+  let reversedStr = '';
+  for (let i = normalizedStr.length - 1; i >= 0; i--) {
+    reversedStr += normalizedStr[i];
+  }
+
+  // Сравниваем нормализованную строку с перевёрнутой
+  return normalizedStr === reversedStr;
+};
+
+palindrom('топот');
