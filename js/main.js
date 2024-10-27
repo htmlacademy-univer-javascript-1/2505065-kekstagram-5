@@ -1,10 +1,9 @@
-// Функция для генерации случайного числа в заданном диапазоне
-function getRandomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Массив с комментариями, из которых будет формироваться случайный комментарий
-const commentsText = [
+const TOTAL_IMAGES = 25;
+const LIKES_MIN = 15;
+const LIKES_MAX = 200;
+const TOTAL_AVATARS = 6;
+const MAX_COMMENTS_PER_IMAGE = 30;
+const COMMENTS = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
   'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
@@ -12,72 +11,71 @@ const commentsText = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
-
-// Массив имён для комментаторов
-const names = [
-  'Анна',
+const DESCRIPTIONS = [
+  'Закат, который невозможно забыть! #Природа #Вечер',
+  'Лучший рецепт недели — обязательно попробуйте! #Рецепт #Кулинария',
+  'Морской бриз и солнце — идеальные моменты! #Пляж #Отдых',
+  'Цветы — волшебные создания! #Природа #Цветы',
+  'Готовность к новым открытиям! #Путешествия #АктивныйОтдых',
+  'Начало дня с ароматного кофе. #Кофе #Утро',
+  'Творчество — это полет фантазии! #Арт #Творчество',
+  'Пушистый друг всегда поднимает настроение! #Питомцы #Любовь',
+];
+const USER_NAMES = [
+  'Олег',
+  'Семён',
+  'Анжела',
+  'Людмила',
+  'Глеб',
   'Иван',
-  'Ольга',
-  'Дмитрий',
-  'Светлана',
-  'Алексей',
-  'Мария',
-  'Павел',
-  'Елена',
-  'Артём',
+  'Эдик',
 ];
 
-// Функция для генерации случайного комментария
-function generateComment(id) {
-  const message = commentsText[getRandomNumber(0, commentsText.length - 1)];
-  const name = names[getRandomNumber(0, names.length - 1)];
-  const avatar = `img/avatar-${getRandomNumber(1, 6)}.svg`;
-  return {
-    id: id,
-    avatar: avatar,
-    message: message,
-    name: name,
+const randomIntInRange = (a, b) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+  const result = Math.floor(Math.random() * (upper - lower + 1)) + lower;
+  return result;
+};
+
+const pickRandomElement = (items) =>
+  items[randomIntInRange(0, items.length - 1)];
+
+const createIdGenerator = () => {
+  let lastGeneratedId = 0;
+
+  return () => {
+    lastGeneratedId += 1;
+    return lastGeneratedId;
   };
-}
+};
 
-// Функция для генерации массива комментариев
-function generateComments(count) {
-  const comments = [];
-  for (let i = 0; i < count; i++) {
-    const commentId = getRandomNumber(100, 999);
-    comments.push(generateComment(commentId));
-  }
-  return comments;
-}
+const generateCommentId = createIdGenerator();
 
-// Функция для генерации описания фотографии
-function generatePhotoDescription(id) {
-  const url = `photos/${id}.jpg`;
-  const description = `Описание фотографии номер ${id}`;
-  const likes = getRandomNumber(15, 200);
-  const commentsCount = getRandomNumber(0, 30);
-  const comments = generateComments(commentsCount);
+const createMessage = () =>
+  Array.from({ length: randomIntInRange(1, 2) }, () =>
+    pickRandomElement(COMMENTS)
+  ).join('');
 
-  return {
-    id: id,
-    url: url,
-    description: description,
-    likes: likes,
-    comments: comments,
-  };
-}
+const makeComment = () => ({
+  id: generateCommentId(),
+  avatar: `img/avatar-${randomIntInRange(1, TOTAL_AVATARS)}.svg`,
+  message: createMessage(),
+  name: pickRandomElement(USER_NAMES),
+});
 
-// Функция для генерации массива из 25 объектов
-function generatePhotosArray() {
-  const photos = [];
-  for (let i = 1; i <= 25; i++) {
-    photos.push(generatePhotoDescription(i));
-  }
-  return photos;
-}
+const createImageData = (index) => ({
+  id: index,
+  url: `photos/${index}.jpg`,
+  descriptions: pickRandomElement(DESCRIPTIONS),
+  likes: randomIntInRange(LIKES_MIN, LIKES_MAX),
+  comments: Array.from(
+    { length: randomIntInRange(0, MAX_COMMENTS_PER_IMAGE) },
+    makeComment
+  ),
+});
 
-// Генерация массива с фото
-const photosArray = generatePhotosArray();
+const generateImageCollection = () =>
+  Array.from({ length: TOTAL_IMAGES }, (_, index) => createImageData(index + 1));
 
-photosArray();
-
+generateImageCollection();
