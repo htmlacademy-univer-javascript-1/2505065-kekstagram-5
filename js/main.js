@@ -1,81 +1,71 @@
-/* eslint-disable */
-function getRandomNumber(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-const messages = [
-  "Всё отлично!",
-  "В целом всё неплохо. Но не всё.",
-  "Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.",
-  "Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.",
-  "Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.",
-  "Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!",
+const MESSAGES = [
+  'Всё отлично!',
+  'В целом всё неплохо. Но не всё.',
+  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
+  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
 ];
 
-const names = [
-  "Артём",
-  "Ирина",
-  "Сергей",
-  "Елена",
-  "Алексей",
-  "Мария",
-  "Дмитрий",
-  "Ольга",
-  "Николай",
-  "Анна",
+const NAMES = [
+  'Даниил',
+  'Федор',
+  'Михаил',
+  'Иван',
+  'Сергей',
+  'Марина',
+  'Дмитрий',
 ];
 
-const photoIds = Array.from({ length: 25 }, (_, index) => index + 1);
+const getRandomInteger = (a, b) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+  const result = Math.random() * (upper - lower + 1) + lower;
+  return Math.floor(result);
+};
 
-let usedCommentIds = [];
+function createRandomIdFromRangeGenerator(min, max) {
+  const previousValues = [];
 
-function generateUniqueCommentId() {
-  let id;
-  do {
-    id = getRandomNumber(1, 1000);
-  } while (usedCommentIds.includes(id));
-  usedCommentIds.push(id);
-  return id;
-}
+  return function () {
+    let currentValue = getRandomInteger(min, max);
+    if (previousValues.length >= max - min - 1) {
+      return null;
+    }
 
-function createComment() {
-  const avatarNumber = getRandomNumber(1, 6);
-  const messageCount = getRandomNumber(1, 2);
+    while (previousValues.includes(currentValue)) {
+      currentValue = getRandomInteger(min, max);
+    }
 
-  const message = Array.from(
-    { length: messageCount },
-    () => messages[getRandomNumber(0, messages.length - 1)]
-  ).join(" ");
-  return {
-    id: generateUniqueCommentId(),
-    avatar: `img/avatar-${avatarNumber}.svg`,
-    message: message,
-    name: names[getRandomNumber(0, names.length - 1)],
+    previousValues.push(currentValue);
+    return currentValue;
   };
 }
 
-function createComments() {
-  const commentsCount = getRandomNumber(0, 30);
-  return Array.from({ length: commentsCount }, createComment);
-}
-
-function createPhotoDescription() {
-  const descriptions = [
-    "Красивый пейзаж на закате.",
-    "Весёлая вечеринка с друзьями.",
-    "Удивительный момент из путешествия.",
-    "Моё новое хобби - фотография.",
-    "Наслаждаюсь природой и свежим воздухом.",
-  ];
-  return descriptions[getRandomNumber(0, descriptions.length - 1)];
-}
-
-const photos = photoIds.map((id) => {
-  return {
-    id: id,
-    url: `photos/${id}.jpg`,
-    description: createPhotoDescription(),
-    likes: getRandomNumber(15, 200),
-    comments: createComments(),
-  };
+const createComments = () => ({
+  id: createRandomIdFromRangeGenerator(1, 1000),
+  avatar: `img/avatar-${getRandomInteger(1, 6)}.svg`,
+  message: MESSAGES[getRandomInteger(0, MESSAGES.length - 1)],
+  name: NAMES[getRandomInteger(0, NAMES.length - 1)],
 });
+
+function createPhoto() {
+  const comments = [];
+  for (let i = 0; i <= getRandomInteger(0, 30); i++) {
+    comments.push(createComments());
+  }
+  return {
+    id: getRandomInteger(1, 25),
+    url: `photos/${getRandomInteger(1, 25)}.jpg`,
+    description: 'фотография',
+    likes: createRandomIdFromRangeGenerator(15, 200),
+    comments: comments,
+  };
+}
+
+function createArrayOfPhotos() {
+  for (let i = 0; i < 25; i++) {
+    createPhoto();
+  }
+}
+createArrayOfPhotos();
