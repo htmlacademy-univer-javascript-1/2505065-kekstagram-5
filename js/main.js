@@ -1,2 +1,2 @@
-import { similarDescriptionPhoto } from './date';
+import { similarDescriptionPhoto } from 'js/date.js';
 similarDescriptionPhoto();

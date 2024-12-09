@@ -1,4 +1,4 @@
-import { getRandomInt, getRandomUniqueNumberGenerate } from './util.js';
+import { getRandomInt, getRandomUniqueNumberGenerate } from 'js/util.js';
 
 const description = [
   'Очень красивое небо',
