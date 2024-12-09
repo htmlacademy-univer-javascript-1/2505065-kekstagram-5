@@ -1,8 +1,4 @@
-import {
-  getRandomInteger,
-  getRandomArrayElement,
-  createIdGenerator,
-} from 'js/util.js';
+import { getRandomInteger, getRandomArrayElement, createId } from 'js/util.js';
 
 const PICTURE_COUNT = 25;
 const AVATAR_COUNT = 6;
@@ -35,7 +31,7 @@ const DESCRIPTIONS = [
   'Я пересмотрел фильм "Драйв" с Райаном Гослингом.',
 ];
 
-const generateCommentId = createIdGenerator();
+const generateCommentId = createId();
 
 const createMessage = () =>
   Array.from({ length: getRandomInteger(1, 2) }, () =>
