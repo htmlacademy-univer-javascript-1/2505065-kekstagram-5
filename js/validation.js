@@ -42,7 +42,7 @@ const IMAGE_EFFECTS = {
   heat: { filter: 'brightness', min: 1, max: 3, step: 0.1, unit: '' },
 };
 
-const splitAndCleanTags = (inputString) =>
+const splitAndClearTags = (inputString) =>
   inputString.trim().split(/\s+/).filter(Boolean);
 
 const checkTags = (tags) => {
@@ -55,7 +55,7 @@ const checkTags = (tags) => {
 };
 
 const validateTags = (inputValue) => {
-  const tagsArray = splitAndCleanTags(inputValue);
+  const tagsArray = splitAndClearTags(inputValue);
   const { hasValidCount, isUnique, matchesPattern } = checkTags(tagsArray);
   return hasValidCount && isUnique && matchesPattern;
 };
@@ -73,7 +73,7 @@ formValidator.addValidator(
 );
 formValidator.addValidator(
   Elements.hashtagField,
-  (value) => splitAndCleanTags(value).length <= Config.MAX_TAGS,
+  (value) => splitAndClearTags(value).length <= Config.MAX_TAGS,
   Messages.TOO_MANY_TAGS,
   3,
   true
@@ -81,7 +81,7 @@ formValidator.addValidator(
 formValidator.addValidator(
   Elements.hashtagField,
   (value) => {
-    const tags = splitAndCleanTags(value);
+    const tags = splitAndClearTags(value);
     const uniqueTags = new Set(tags.map((tag) => tag.toLowerCase()));
     return uniqueTags.size === tags.length;
   },
@@ -92,7 +92,7 @@ formValidator.addValidator(
 
 let activeEffect = 'none';
 
-const updateImageScale = (value) => {
+const refreshImageScale = (value) => {
   const scale = Math.min(
     Math.max(value, SCALE_CONFIG.MIN_VALUE),
     SCALE_CONFIG.MAX_VALUE
@@ -101,7 +101,7 @@ const updateImageScale = (value) => {
   Elements.previewImage.style.transform = `scale(${scale / 100})`;
 };
 
-const applyImageEffect = (effect, value) => {
+const useImageEffect = (effect, value) => {
   const { filter, unit } = IMAGE_EFFECTS[effect];
   Elements.previewImage.style.filter = filter
     ? `${filter}(${value}${unit})`
@@ -109,7 +109,7 @@ const applyImageEffect = (effect, value) => {
   Elements.effectLevelValue.value = value;
 };
 
-const updateEffectSlider = (effect) => {
+const refreshEffectSlider = (effect) => {
   const { min, max, step, hiddenSlider } = IMAGE_EFFECTS[effect];
   Elements.effectSlider.noUiSlider.updateOptions({
     range: { min, max },
@@ -123,30 +123,30 @@ const updateEffectSlider = (effect) => {
 };
 
 const resetImageSettings = () => {
-  updateImageScale(SCALE_CONFIG.DEFAULT_VALUE);
+  refreshImageScale(SCALE_CONFIG.DEFAULT_VALUE);
   activeEffect = 'none';
-  updateEffectSlider(activeEffect);
+  refreshEffectSlider(activeEffect);
   Elements.previewImage.style.filter = '';
   Elements.effectSliderContainer.classList.add('hidden');
 };
 
-const updateScale = (increment) => {
+const refreshScale = (increment) => {
   const currentValue = parseInt(Elements.scaleControlValue.value, 10);
-  updateImageScale(currentValue + increment);
+  refreshImageScale(currentValue + increment);
 };
 
 Elements.scaleControlSmaller.addEventListener('click', () =>
-  updateScale(-SCALE_CONFIG.INCREMENT)
+  refreshScale(-SCALE_CONFIG.INCREMENT)
 );
 Elements.scaleControlBigger.addEventListener('click', () =>
-  updateScale(SCALE_CONFIG.INCREMENT)
+  refreshScale(SCALE_CONFIG.INCREMENT)
 );
 
 Elements.effectButtons.forEach((button) => {
   button.addEventListener('change', (evt) => {
     activeEffect = evt.target.value;
-    updateEffectSlider(activeEffect);
-    applyImageEffect(activeEffect, IMAGE_EFFECTS[activeEffect].max);
+    refreshEffectSlider(activeEffect);
+    useImageEffect(activeEffect, IMAGE_EFFECTS[activeEffect].max);
   });
 });
 
@@ -158,7 +158,7 @@ noUiSlider.create(Elements.effectSlider, {
 });
 
 Elements.effectSlider.noUiSlider.on('update', (values) => {
-  applyImageEffect(activeEffect, values[0]);
+  useImageEffect(activeEffect, values[0]);
 });
 
 function onDocumentKeydown(evt) {
@@ -202,4 +202,4 @@ Elements.form.addEventListener('submit', (event) => {
   }
 });
 
-updateEffectSlider('none');
+refreshEffectSlider('none');
