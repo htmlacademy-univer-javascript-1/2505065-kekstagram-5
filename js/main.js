@@ -1,3 +1,5 @@
+import { similarDescriptionPhoto } from 'js/date.js';
+similarDescriptionPhoto();
 const MESSAGES = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
