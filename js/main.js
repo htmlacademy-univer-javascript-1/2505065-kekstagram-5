@@ -1,6 +1,6 @@
-/* eslint-disable no-console */
+import { generatePhotos } from './data.js';
+generatePhotos();
+// console.log(generatePhotos());
 
-import { createPhotos } from './data.js';
-
-const arrayPhotos = createPhotos();
-console.log(arrayPhotos);
+import { renderingThumbnails } from './rendering.js';
+renderingThumbnails();
