@@ -1,54 +1,68 @@
-import { getRandomInt } from './util.js';
+import {
+  getRandomInteger,
+  getRandomArrayElement,
+  createIdGenerator,
+} from 'js/util.js';
 
-const PHOTO_COUNT = 25;
-const MIN_LIKES = 15;
-const MAX_LIKES = 200;
-const MAX_COMMENTS = 30;
+const PICTURE_COUNT = 25;
 const AVATAR_COUNT = 6;
+const LIKE_MIN_COUNT = 15;
+const LIKE_MAX_COUNT = 200;
+const COMMENTS_COUNT = 30;
+const NAMES = [
+  'Андрей',
+  'Валерий',
+  'Светлана',
+  'Александра',
+  'Анастасия',
+  'Вячеслав',
+];
+const MESSAGES = [
+  'Всё отлично!',
+  'В целом всё неплохо. Но не всё.',
+  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
+  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
+];
+const DESCRIPTIONS = [
+  'Я на отдыхе с семьей',
+  'Люблю Сочи, езжу сюда каждый год #путешествия #summervibe',
+  'посмотрел новый сериал с женой #телевизор',
+  'Купила машину!!! #бойтесь',
+  'Ура, я переехал в Америку. Не знаю зачем, просто случайно вышло. #жизньнепредсказуема',
+  'опять не спал месяц',
+  'Я пересмотрел фильм "Драйв" с Райаном Гослингом.',
+];
 
-function generatePhotos() {
-  const photos = [];
-  const names = ['Настя', 'Артём', 'Саша', 'Ирина', 'Андрей', 'Максим'];
-  const descriptions = [
-    'Отличные выходные!',
-    'Теплый вечер.',
-    'Покупка мечты!',
-    'Повод улыбнуться.',
-    'Работал работал - заработал.',
-    'Всё возможно!',
-    'Провожу время с любимыми.',
-    'Кекс заставил выложить!',
-  ];
-  const comments = [
-    'Всё отлично!',
-    'В целом всё неплохо. Но не всё.',
-    'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-    'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-    'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-    'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!',
-  ];
+const generateCommentId = createIdGenerator();
 
-  for (let i = 1; i <= PHOTO_COUNT; i++) {
-    const photo = {
-      id: i,
-      url: `photos/${i}.jpg`,
-      description: descriptions[getRandomInt(0, descriptions.length - 1)],
-      likes: getRandomInt(MIN_LIKES, MAX_LIKES),
-      comments: [],
-    };
+const createMessage = () =>
+  Array.from({ length: getRandomInteger(1, 2) }, () =>
+    getRandomArrayElement(MESSAGES)
+  ).join(' ');
 
-    const commentCount = getRandomInt(0, MAX_COMMENTS);
-    for (let j = 0; j < commentCount; j++) {
-      photo.comments.push({
-        id: j + 1,
-        avatar: `img/avatar-${getRandomInt(1, AVATAR_COUNT)}.svg`,
-        message: `${comments[getRandomInt(0, comments.length - 1)]}`,
-        name: names[getRandomInt(0, names.length - 1)],
-      });
-    }
-    photos.push(photo);
-  }
-  return photos;
-}
+const createComment = () => ({
+  id: generateCommentId(),
+  avatar: `img/avatar-${getRandomInteger(1, AVATAR_COUNT)}.svg`,
+  message: createMessage(),
+  name: getRandomArrayElement(NAMES),
+});
 
-export { generatePhotos };
+const createPicture = (index) => ({
+  id: index,
+  url: `photos/${index}.jpg`,
+  description: getRandomArrayElement(DESCRIPTIONS),
+  likes: getRandomInteger(LIKE_MIN_COUNT, LIKE_MAX_COUNT),
+  comments: Array.from(
+    { length: getRandomInteger(0, COMMENTS_COUNT) },
+    createComment
+  ),
+});
+
+const getPictures = () =>
+  Array.from({ length: PICTURE_COUNT }, (_, pictureIndex) =>
+    createPicture(pictureIndex + 1)
+  );
+
+export { getPictures };
