@@ -1,5 +1,22 @@
 const ALERT_SHOW_TIME = 5000;
-const isEscapeKey = (evt) => evt.key === 'Escape';
+
+const getRandomInteger = (a, b) => {
+  const lower = Math.ceil(Math.min(a, b));
+  const upper = Math.floor(Math.max(a, b));
+  const result = Math.random() * (upper - lower + 1) + lower;
+  return Math.floor(result);
+};
+
+const getRandomArrayElement = (items) => items[getRandomInteger(0, items.length - 1)];
+
+const createId = () => {
+  let lastId = 0;
+  return () => {
+    lastId += 1;
+    return lastId;
+  };
+};
+
 const showAlert = (message) => {
   const alert = document.createElement('div');
   alert.style.position = 'absolute';
@@ -19,4 +36,12 @@ const showAlert = (message) => {
   }, ALERT_SHOW_TIME);
 };
 
-export { isEscapeKey, showAlert };
+const debounce = (callback, timeoutDelay = 500) => {
+  let timeoutId;
+  return (...rest) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => callback.apply(this, rest), timeoutDelay);
+  };
+};
+
+export { createId, debounce, showAlert, getRandomInteger, getRandomArrayElement };

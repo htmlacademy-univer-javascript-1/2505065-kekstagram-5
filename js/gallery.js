@@ -1,23 +1,28 @@
-import { renderMiniatures } from 'js/miniature.js';
-import { showBigPicture } from 'js/big-picture.js';
+import { renderThumbnails } from './thumbnail.js';
+import { showBigPicture } from './big-picture.js';
 
 const container = document.querySelector('.pictures');
 
-const renderGallery = (pictures) => {
-  container.addEventListener('click', (evt) => {
-    const miniature = evt.target.closest('[data-miniature-id]');
-    if (!miniature) {
-      return;
-    }
+let pictures = [];
 
-    evt.preventDefault();
-    const picture = pictures.find(
-      (item) => item.id === +miniature.dataset.miniatureId
-    );
-    showBigPicture(picture);
-  });
+const onContainerClick = (evt) => {
 
-  renderMiniatures(pictures, container);
+  const thumbnail = evt.target.closest('[data-thumbnail-id]');
+  if (!thumbnail) {
+    return;
+  }
+
+  evt.preventDefault();
+  const picture = pictures.find(
+    (item) => item.id === +thumbnail.dataset.thumbnailId
+  );
+  showBigPicture(picture);
+};
+
+const renderGallery = (currentPictures) => {
+  pictures = currentPictures;
+  renderThumbnails(pictures, container);
+  container.addEventListener('click', onContainerClick);
 };
 
 export { renderGallery };
