@@ -1,32 +1,34 @@
 const SCALE_STEP = 25;
 const MIN_SCALE = 25;
-const MAX_SCALE = 100;
+const BIG_SCALE = 100;
 const DEFAULT_SCALE = 100;
+const buttonScaleSmaller = document.querySelector('.scale__control--smaller');
+const buttonScaleBigger = document.querySelector('.scale__control--bigger');
+const fieldScale = document.querySelector('.scale__control--value');
+const image = document.querySelector('.img-upload__preview');
 
-const modalElement = document.querySelector('.img-upload');
-const smallButtonElement = modalElement.querySelector('.scale__control--smaller');
-const bigButtonElement = modalElement.querySelector('.scale__control--bigger');
-const scaleInputElement = modalElement.querySelector('.scale__control--value');
-const imageElement = modalElement.querySelector('.img-upload__preview img');
-
-const scaleImage = (value) => {
-  imageElement.style.transform = `scale(${value / 100})`;
-  scaleInputElement.value = `${value}%`;
+const scaleImage = (newScaleValue) => {
+  image.style.transform = `scale(${newScaleValue / 100})`;
+  fieldScale.value = `${newScaleValue}%`;
 };
 
-const onSmallButton = () => {
-  const newScaleValue = parseInt(scaleInputElement.value, 10) - SCALE_STEP;
-  scaleImage(Math.max(newScaleValue, MIN_SCALE));
+const onSmallerButtonClick = () => {
+  const newScaleValue = parseInt(fieldScale.value, 10) - SCALE_STEP;
+  if (newScaleValue >= MIN_SCALE){
+    scaleImage(newScaleValue);
+  }
 };
 
-const onBigButton = () => {
-  const newScaleValue = parseInt(scaleInputElement.value, 10) + SCALE_STEP;
-  scaleImage(Math.min(newScaleValue, MAX_SCALE));
+const onBiggerButtonClick = () => {
+  const newScaleValue = parseInt(fieldScale.value, 10) + SCALE_STEP;
+  if (newScaleValue <= BIG_SCALE) {
+    scaleImage(newScaleValue);
+  }
 };
 
 const resetScale = () => scaleImage(DEFAULT_SCALE);
 
-smallButtonElement.addEventListener('click', onSmallButton);
-bigButtonElement.addEventListener('click', onBigButton);
+buttonScaleSmaller.addEventListener('click', onSmallerButtonClick);
+buttonScaleBigger.addEventListener('click', onBiggerButtonClick);
 
-export { resetScale };
+export {resetScale};
